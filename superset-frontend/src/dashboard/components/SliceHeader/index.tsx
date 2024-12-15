@@ -30,6 +30,7 @@ import Icons from 'src/components/Icons';
 import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
+import { Modal } from 'antd';
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -161,6 +162,7 @@ const SliceHeader: FC<SliceHeaderProps> = ({
   const uiConfig = useUiConfig();
   const dashboardPageId = useContext(DashboardPageIdContext);
   const [headerTooltip, setHeaderTooltip] = useState<ReactNode | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   // TODO: change to indicator field after it will be implemented
   const crossFilterValue = useSelector<RootState, any>(
@@ -189,6 +191,13 @@ const SliceHeader: FC<SliceHeaderProps> = ({
 
   const exploreUrl = `/explore/?dashboard_page_id=${dashboardPageId}&slice_id=${slice.slice_id}`;
 
+  const handleTooltipClick = () => {
+    setModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setModalVisible(false);
+  };
   return (
     <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
       <div className="header-title" ref={headerRef}>
@@ -232,6 +241,27 @@ const SliceHeader: FC<SliceHeaderProps> = ({
             />
           </Tooltip>
         )}
+      </div>
+      <div className="header-tooltip">
+        <button onClick={handleTooltipClick} className="chart-tooltip"
+        style={{
+          border: 'none',
+          background: 'none',
+          padding: '0', 
+          margin: '0', 
+        }}>
+          <i
+            className="fas fa-lightbulb"
+            title="This chart provides additional insights."
+            style={{
+              marginLeft: '8px',
+              marginTop: '7px',
+              cursor: 'pointer',
+              color: '#888',
+              fontSize: '16px',
+            }}
+          ></i>
+        </button>
       </div>
       <div className="header-controls">
         {!editMode && (
@@ -290,6 +320,17 @@ const SliceHeader: FC<SliceHeaderProps> = ({
           </>
         )}
       </div>
+      {modalVisible && (
+        <Modal
+          title="Chart Insights"
+          visible={modalVisible}
+          onCancel={handleModalClose}
+          footer={null}
+        >
+          <p>Additional insights about this chart...</p>
+          {/* Add your modal content here */}
+        </Modal>
+      )}
     </ChartHeaderStyles>
   );
 };
