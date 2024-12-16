@@ -31,6 +31,7 @@ import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
 import { Modal } from 'antd';
+import ReactMarkdown from "react-markdown";
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -198,6 +199,25 @@ const SliceHeader: FC<SliceHeaderProps> = ({
   const handleModalClose = () => {
     setModalVisible(false);
   };
+
+  const payload = {
+    message: "Success",
+    data: `Dari grafik Monthly Revenue untuk tahun 2024, 
+            terlihat bahwa pendapatan bulanan mengalami 
+            peningkatan dari bulan Januari hingga Maret. 
+            Namun, peningkatan tersebut tidak terlalu signifikan 
+            antara bulan Februari dan Maret.\n\nPotensi masalah yang terlihat 
+            dalam grafik ini adalah bahwa hanya terdapat data untuk 3 bulan pertama tahun 2024. 
+            Hal ini membuat sulit untuk melihat tren pendapatan secara 
+            keseluruhan selama tahun tersebut. Sebaiknya data untuk bulan-bulan selanjutnya 
+            juga ditambahkan agar dapat memberikan gambaran yang lebih lengkap.\n\nAnomali yang 
+            terlihat adalah peningkatan pendapatan yang tidak konsisten antara 
+            bulan Februari dan Maret. Hal ini bisa disebabkan oleh faktor-faktor 
+            seperti perubahan strategi pemasaran, fluktuasi pasar, atau perubahan 
+            dalam kebijakan harga. Sebaiknya dilakukan analisis lebih lanjut untuk memahami penyebab dari anomali tersebut.`,
+    status: 200,
+  };
+
   return (
     <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
       <div className="header-title" ref={headerRef}>
@@ -327,7 +347,7 @@ const SliceHeader: FC<SliceHeaderProps> = ({
           onCancel={handleModalClose}
           footer={null}
         >
-          <p>Additional insights about this chart...</p>
+          <ReactMarkdown>{payload.data}</ReactMarkdown>
           {/* Add your modal content here */}
         </Modal>
       )}
