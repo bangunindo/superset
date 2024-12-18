@@ -1,21 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { css, getExtensionsRegistry, styled, t } from '@superset-ui/core';
 import { useUiConfig } from 'src/components/UiConfigContext';
@@ -165,6 +147,9 @@ const SliceHeader: FC<SliceHeaderProps> = ({
   const [headerTooltip, setHeaderTooltip] = useState<ReactNode | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
+  const [apiData, setApiData] = useState<string>(''); 
+  const [loading, setLoading] = useState(false); 
+
   // TODO: change to indicator field after it will be implemented
   const crossFilterValue = useSelector<RootState, any>(
     state => state.dataMask[slice?.slice_id]?.filterState?.value,
@@ -194,29 +179,138 @@ const SliceHeader: FC<SliceHeaderProps> = ({
 
   const handleTooltipClick = () => {
     setModalVisible(true);
+    fetchData();
   };
 
   const handleModalClose = () => {
     setModalVisible(false);
   };
 
-  const payload = {
-    message: "Success",
-    data: `Dari grafik Monthly Revenue untuk tahun 2024, 
-            terlihat bahwa pendapatan bulanan mengalami 
-            peningkatan dari bulan Januari hingga Maret. 
-            Namun, peningkatan tersebut tidak terlalu signifikan 
-            antara bulan Februari dan Maret.\n\nPotensi masalah yang terlihat 
-            dalam grafik ini adalah bahwa hanya terdapat data untuk 3 bulan pertama tahun 2024. 
-            Hal ini membuat sulit untuk melihat tren pendapatan secara 
-            keseluruhan selama tahun tersebut. Sebaiknya data untuk bulan-bulan selanjutnya 
-            juga ditambahkan agar dapat memberikan gambaran yang lebih lengkap.\n\nAnomali yang 
-            terlihat adalah peningkatan pendapatan yang tidak konsisten antara 
-            bulan Februari dan Maret. Hal ini bisa disebabkan oleh faktor-faktor 
-            seperti perubahan strategi pemasaran, fluktuasi pasar, atau perubahan 
-            dalam kebijakan harga. Sebaiknya dilakukan analisis lebih lanjut untuk memahami penyebab dari anomali tersebut.`,
-    status: 200,
+  // const params = {
+  //   chart_title: "Sales Distribution",
+  //   chart_description: "Distribution of sales across regions",
+  //   data: [
+  //   	  {region: "North", sales: 100},
+  //       {region: "South", sales: 150},
+  //       {region: "East", sales: 75}
+  //     ],
+  //   visualization_type: "Pie",
+  //   x_axis: "Region",
+  //   y_axis: "Sales"
+  // };
+
+  // const fetchData = async () => {
+  //   setLoading(true); 
+  //   try {  
+  //     const response = await fetch('https://10.184.0.61/backend/insight/generate', {
+  //     // const response = await fetch('/api/v1/chart/data', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(params),
+  //       mode: 'no-cors',
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error('Gagal mengambil data');
+  //     }
+  
+  //     const result = await response.json(); 
+  //     console.log('Response Data:', result);
+  
+  //     setApiData(result || 'Data tidak tersedia'); 
+
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     setApiData('Terjadi kesalahan saat mengambil data.');
+  //   } finally {
+  //     setLoading(false); 
+  //   }
+  // };
+
+  const fetchData = async () => {
+    setLoading(true); 
+    try {
+      const params = {
+        "chart_title": "Sales Distribution",
+        "chart_description": "Distribution of sales across regions",
+        "data": [
+          {"region": "North", "sales": 100},
+            {"region": "South", "sales": 150},
+            {"region": "East", "sales": 75}
+          ],
+          "visualization_type": "Pie",
+          "x_axis": "Region",
+          "y_axis": "Sales"
+        };
+      
+      const response = await fetch('https://10.184.0.61/backend/insight/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+        mode: 'no-cors',
+      });
+  
+      if (!response.ok) {
+        throw new Error('Gagal mengambil data');
+      }
+  
+      const result = await response.json(); 
+      console.log('Response Data:', result);
+  
+      setApiData(result || 'Data tidak tersedia'); 
+  
+    } catch (error) {
+      console.error('Error:', error);
+      setApiData('Terjadi kesalahan saat mengambil data.');
+    } finally {
+      setLoading(false); 
+    }
   };
+  
+
+  // Fetch data dari API saat modal dibuka
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetch('/api/v1/chart/data', {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Gagal mengambil data');
+  //     }
+  //     const result = await response.json();
+  //     setApiData(result.data || 'Data tidak tersedia');
+  //   } catch (error) {
+  //     setApiData('Terjadi kesalahan saat mengambil data.');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const payload = {
+  //   message: "Success",
+  //   data: `Dari grafik Monthly Revenue untuk tahun 2024, 
+  //           terlihat bahwa pendapatan bulanan mengalami 
+  //           peningkatan dari bulan Januari hingga Maret. 
+  //           Namun, peningkatan tersebut tidak terlalu signifikan 
+  //           antara bulan Februari dan Maret.\n\nPotensi masalah yang terlihat 
+  //           dalam grafik ini adalah bahwa hanya terdapat data untuk 3 bulan pertama tahun 2024. 
+  //           Hal ini membuat sulit untuk melihat tren pendapatan secara 
+  //           keseluruhan selama tahun tersebut. Sebaiknya data untuk bulan-bulan selanjutnya 
+  //           juga ditambahkan agar dapat memberikan gambaran yang lebih lengkap.\n\nAnomali yang 
+  //           terlihat adalah peningkatan pendapatan yang tidak konsisten antara 
+  //           bulan Februari dan Maret. Hal ini bisa disebabkan oleh faktor-faktor 
+  //           seperti perubahan strategi pemasaran, fluktuasi pasar, atau perubahan 
+  //           dalam kebijakan harga. Sebaiknya dilakukan analisis lebih lanjut untuk memahami penyebab dari anomali tersebut.`,
+  //   status: 200,
+  // };
 
   return (
     <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
@@ -347,7 +441,11 @@ const SliceHeader: FC<SliceHeaderProps> = ({
           onCancel={handleModalClose}
           footer={null}
         >
-          <ReactMarkdown>{payload.data}</ReactMarkdown>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <ReactMarkdown>{apiData}</ReactMarkdown>
+          )}
           {/* Add your modal content here */}
         </Modal>
       )}
