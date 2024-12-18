@@ -186,63 +186,20 @@ const SliceHeader: FC<SliceHeaderProps> = ({
     setModalVisible(false);
   };
 
-  // const params = {
-  //   chart_title: "Sales Distribution",
-  //   chart_description: "Distribution of sales across regions",
-  //   data: [
-  //   	  {region: "North", sales: 100},
-  //       {region: "South", sales: 150},
-  //       {region: "East", sales: 75}
-  //     ],
-  //   visualization_type: "Pie",
-  //   x_axis: "Region",
-  //   y_axis: "Sales"
-  // };
-
-  // const fetchData = async () => {
-  //   setLoading(true); 
-  //   try {  
-  //     const response = await fetch('https://10.184.0.61/backend/insight/generate', {
-  //     // const response = await fetch('/api/v1/chart/data', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(params),
-  //       mode: 'no-cors',
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error('Gagal mengambil data');
-  //     }
-  
-  //     const result = await response.json(); 
-  //     console.log('Response Data:', result);
-  
-  //     setApiData(result || 'Data tidak tersedia'); 
-
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     setApiData('Terjadi kesalahan saat mengambil data.');
-  //   } finally {
-  //     setLoading(false); 
-  //   }
-  // };
-
   const fetchData = async () => {
     setLoading(true); 
     try {
       const params = {
-        "chart_title": "Sales Distribution",
-        "chart_description": "Distribution of sales across regions",
+        "chart_title": slice.slice_name,
+        "chart_description": slice.slice_description,
         "data": [
-          {"region": "North", "sales": 100},
+            {"region": "North", "sales": 100},
             {"region": "South", "sales": 150},
             {"region": "East", "sales": 75}
           ],
-          "visualization_type": "Pie",
-          "x_axis": "Region",
-          "y_axis": "Sales"
+          "visualization_type": slice.viz_type,
+          // "x_axis": "Region",
+          // "y_axis": "Sales"
         };
       
       const response = await fetch('https://10.184.0.61/backend/insight/generate', {
@@ -251,7 +208,6 @@ const SliceHeader: FC<SliceHeaderProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(params),
-        mode: 'no-cors',
       });
   
       if (!response.ok) {
@@ -261,57 +217,30 @@ const SliceHeader: FC<SliceHeaderProps> = ({
       const result = await response.json(); 
       console.log('Response Data:', result);
   
-      setApiData(result || 'Data tidak tersedia'); 
+      setApiData(result.data || 'Data tidak tersedia'); 
   
     } catch (error) {
       console.error('Error:', error);
+      console.log('slice:', {
+        "chart_title": slice.slice_name,
+        "chart_description": slice.description,
+        "data": [
+          {"region": "North", "sales": 100},
+            {"region": "South", "sales": 150},
+            {"region": "East", "sales": 75}
+          ],
+          "visualization_type": slice.viz_type,
+          "x_axis": "Region",
+          "y_axis": "Sales"
+        });
+        console.log('form data:', formData)
+
       setApiData('Terjadi kesalahan saat mengambil data.');
     } finally {
       setLoading(false); 
     }
   };
   
-
-  // Fetch data dari API saat modal dibuka
-  // const fetchData = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch('/api/v1/chart/data', {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error('Gagal mengambil data');
-  //     }
-  //     const result = await response.json();
-  //     setApiData(result.data || 'Data tidak tersedia');
-  //   } catch (error) {
-  //     setApiData('Terjadi kesalahan saat mengambil data.');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const payload = {
-  //   message: "Success",
-  //   data: `Dari grafik Monthly Revenue untuk tahun 2024, 
-  //           terlihat bahwa pendapatan bulanan mengalami 
-  //           peningkatan dari bulan Januari hingga Maret. 
-  //           Namun, peningkatan tersebut tidak terlalu signifikan 
-  //           antara bulan Februari dan Maret.\n\nPotensi masalah yang terlihat 
-  //           dalam grafik ini adalah bahwa hanya terdapat data untuk 3 bulan pertama tahun 2024. 
-  //           Hal ini membuat sulit untuk melihat tren pendapatan secara 
-  //           keseluruhan selama tahun tersebut. Sebaiknya data untuk bulan-bulan selanjutnya 
-  //           juga ditambahkan agar dapat memberikan gambaran yang lebih lengkap.\n\nAnomali yang 
-  //           terlihat adalah peningkatan pendapatan yang tidak konsisten antara 
-  //           bulan Februari dan Maret. Hal ini bisa disebabkan oleh faktor-faktor 
-  //           seperti perubahan strategi pemasaran, fluktuasi pasar, atau perubahan 
-  //           dalam kebijakan harga. Sebaiknya dilakukan analisis lebih lanjut untuk memahami penyebab dari anomali tersebut.`,
-  //   status: 200,
-  // };
-
   return (
     <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
       <div className="header-title" ref={headerRef}>

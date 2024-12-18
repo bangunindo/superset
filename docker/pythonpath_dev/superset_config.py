@@ -28,6 +28,10 @@ from flask_caching.backends.filesystemcache import FileSystemCache
 
 logger = logging.getLogger()
 
+APP_NAME = "Dashboard"
+APP_ICON = "/static/assets/images/superset-logo-horiz.png"
+LOGO_TARGET_PATH = "/static/assets/images/superset-logo-horiz.png"
+
 DATABASE_DIALECT = os.getenv("DATABASE_DIALECT")
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
@@ -94,7 +98,6 @@ class CeleryConfig:
         },
     }
 
-
 CELERY_CONFIG = CeleryConfig
 
 FEATURE_FLAGS = {"ALERT_REPORTS": True}
@@ -146,7 +149,11 @@ TALISMAN_CONFIG = {
             "'self'",
             "https://api.mapbox.com",
             "https://events.mapbox.com",
-            "https://10.184.0.61",
+            "https://10.184.0.61/backend/",
+            "http://hanif.bangunindo.vpn:5001/",
+            "http://localhost:3000/",
+            "http://localhost:9001/"
+
         ],
         "object-src": "'none'",
         "style-src": [
@@ -177,7 +184,10 @@ TALISMAN_DEV_CONFIG = {
             "'self'",
             "https://api.mapbox.com",
             "https://events.mapbox.com",
-            "https://10.184.0.61",
+            "https://10.184.0.61/backend/",
+            "http://hanif.bangunindo.vpn:5001/",
+            "http://localhost:3000/",
+            "http://localhost:9001/"
         ],
         "object-src": "'none'",
         "style-src": [
@@ -194,5 +204,14 @@ TALISMAN_DEV_CONFIG = {
 # Konfigurasi CORS di Superset (di `superset/config.py` atau file serupa)
 CORS_ORIGINS = [
     "http://localhost:9001",
-    "https://10.184.0.61",
+    "https://10.184.0.61/backend/",
+    "http://hanif.bangunindo.vpn:5001/",
+    "http://localhost:3000/",
 ]
+
+# ENABLE_CORS = True
+# CORS_OPTIONS = {
+#     "origins": ["http://localhost:9001"],  # Frontend origin
+#     "methods": ["GET", "POST", "OPTIONS"],  # Izin metode HTTP
+#     "allow_headers": ["Content-Type", "Authorization"],  # Header yang diizinkan
+# }
