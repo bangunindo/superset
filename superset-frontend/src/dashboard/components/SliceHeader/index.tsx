@@ -14,6 +14,7 @@ import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip'
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
 import { Modal } from 'antd';
 import ReactMarkdown from "react-markdown";
+import { getDataFromChart } from 'src/explore/exploreUtils/index'
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -182,6 +183,7 @@ const SliceHeader: FC<SliceHeaderProps> = ({
     fetchData();
   };
 
+
   const handleModalClose = () => {
     setModalVisible(false);
   };
@@ -189,23 +191,27 @@ const SliceHeader: FC<SliceHeaderProps> = ({
   const fetchData = async () => {
     setLoading(true); 
     try {
+      const data = await getDataFromChart({
+        formData: formData
+      })
+
+      const data_parsed = data.json['result'][0]['data']
+      // console.log(JSON.stringify({"data": params}))
       const params = {
         "chart_title": slice.slice_name,
         "chart_description": slice.slice_description,
-        "data": [
-            {"region": "North", "sales": 100},
-            {"region": "South", "sales": 150},
-            {"region": "East", "sales": 75}
-          ],
-          "visualization_type": slice.viz_type,
+        "data": data_parsed,
+        "visualization_type": slice.viz_type,
           // "x_axis": "Region",
           // "y_axis": "Sales"
         };
+
+      
       
       const response = await fetch('https://10.184.0.61/backend/insight/generate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(params),
       });

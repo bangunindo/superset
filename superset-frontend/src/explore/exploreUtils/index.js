@@ -270,6 +270,57 @@ export const exportChart = ({
   SupersetClient.postForm(url, { form_data: safeStringify(payload) });
 };
 
+export const getDataFromChart = ({
+  formData,
+  resultFormat = 'json',
+  resultType = 'full',
+  force = false,
+  ownState = {},
+}) => {
+  let url;
+  let payload;
+  const [useLegacyApi, parseMethod] = getQuerySettings(formData);
+  if (useLegacyApi) {
+    const endpointType = getLegacyEndpointType({ resultFormat, resultType });
+    url = getExploreUrl({
+      formData,
+      endpointType,
+      allowDomainSharding: false,
+    });
+    payload = formData;
+  } else {
+    url = '/api/v1/chart/data';
+    payload = buildV1ChartDataPayload({
+      formData,
+      force,
+      resultFormat,
+      resultType,
+      ownState,
+      parseMethod,
+    });
+  }
+
+  const header = {
+    "Content-Type": "application/json"
+  }
+  const requestConfig = {
+    headers: header,
+    url: url,
+    body: safeStringify(payload)
+  }
+
+  const response = SupersetClient.post({
+    ...requestConfig,
+  }).then((response) => {
+    console.log(response)
+    return response
+  })
+
+  return response
+
+  // SupersetClient.postForm(url, { form_data: safeStringify(payload) });
+};
+
 export const exploreChart = (formData, requestParams) => {
   const url = getExploreUrl({
     formData,
