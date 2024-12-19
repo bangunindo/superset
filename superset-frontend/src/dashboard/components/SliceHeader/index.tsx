@@ -1,21 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { css, getExtensionsRegistry, styled, t } from '@superset-ui/core';
 import { useUiConfig } from 'src/components/UiConfigContext';
@@ -31,6 +13,8 @@ import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
 import { Modal } from 'antd';
+import ReactMarkdown from "react-markdown";
+import { getDataFromChart } from 'src/explore/exploreUtils/index'
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -164,6 +148,9 @@ const SliceHeader: FC<SliceHeaderProps> = ({
   const [headerTooltip, setHeaderTooltip] = useState<ReactNode | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
+  const [apiData, setApiData] = useState<string>(''); 
+  const [loading, setLoading] = useState(false); 
+
   // TODO: change to indicator field after it will be implemented
   const crossFilterValue = useSelector<RootState, any>(
     state => state.dataMask[slice?.slice_id]?.filterState?.value,
@@ -193,11 +180,73 @@ const SliceHeader: FC<SliceHeaderProps> = ({
 
   const handleTooltipClick = () => {
     setModalVisible(true);
+    fetchData();
   };
+
 
   const handleModalClose = () => {
     setModalVisible(false);
   };
+
+  const fetchData = async () => {
+    setLoading(true); 
+    try {
+      const data = await getDataFromChart({
+        formData: formData
+      })
+
+      const data_parsed = data.json['result'][0]['data']
+      // console.log(JSON.stringify({"data": params}))
+      const params = {
+        "chart_title": slice.slice_name,
+        "chart_description": slice.slice_description,
+        "data": data_parsed,
+        "visualization_type": slice.viz_type,
+          // "x_axis": "Region",
+          // "y_axis": "Sales"
+        };
+
+      
+      
+      const response = await fetch('https://10.184.0.61/backend/insight/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Gagal mengambil data');
+      }
+  
+      const result = await response.json(); 
+      console.log('Response Data:', result);
+  
+      setApiData(result.data || 'Data tidak tersedia'); 
+  
+    } catch (error) {
+      console.error('Error:', error);
+      console.log('slice:', {
+        "chart_title": slice.slice_name,
+        "chart_description": slice.description,
+        "data": [
+          {"region": "North", "sales": 100},
+            {"region": "South", "sales": 150},
+            {"region": "East", "sales": 75}
+          ],
+          "visualization_type": slice.viz_type,
+          "x_axis": "Region",
+          "y_axis": "Sales"
+        });
+        console.log('form data:', formData)
+
+      setApiData('Terjadi kesalahan saat mengambil data.');
+    } finally {
+      setLoading(false); 
+    }
+  };
+  
   return (
     <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
       <div className="header-title" ref={headerRef}>
@@ -327,7 +376,11 @@ const SliceHeader: FC<SliceHeaderProps> = ({
           onCancel={handleModalClose}
           footer={null}
         >
-          <p>Additional insights about this chart...</p>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <ReactMarkdown>{apiData}</ReactMarkdown>
+          )}
           {/* Add your modal content here */}
         </Modal>
       )}
