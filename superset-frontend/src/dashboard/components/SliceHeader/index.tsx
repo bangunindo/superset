@@ -202,11 +202,11 @@ const SliceHeader: FC<SliceHeaderProps> = ({
         "chart_description": slice.slice_description,
         "data": data_parsed,
         "visualization_type": slice.viz_type,
-          // "x_axis": "Region",
-          // "y_axis": "Sales"
-        };
-
-      
+      };
+      if (slice.viz_type === 'chart' || slice.viz_type === 'histogram_v2') {
+        params.x_axis = formData.x_axis_title;
+        params.y_axis = formData.y_axis_title;
+      }
       
       const response = await fetch('https://10.184.0.61/backend/insight/generate', {
         method: 'POST',
@@ -221,26 +221,11 @@ const SliceHeader: FC<SliceHeaderProps> = ({
       }
   
       const result = await response.json(); 
-      console.log('Response Data:', result);
-  
+
       setApiData(result.data || 'Data tidak tersedia'); 
   
     } catch (error) {
       console.error('Error:', error);
-      console.log('slice:', {
-        "chart_title": slice.slice_name,
-        "chart_description": slice.description,
-        "data": [
-          {"region": "North", "sales": 100},
-            {"region": "South", "sales": 150},
-            {"region": "East", "sales": 75}
-          ],
-          "visualization_type": slice.viz_type,
-          "x_axis": "Region",
-          "y_axis": "Sales"
-        });
-        console.log('form data:', formData)
-
       setApiData('Terjadi kesalahan saat mengambil data.');
     } finally {
       setLoading(false); 
@@ -371,7 +356,12 @@ const SliceHeader: FC<SliceHeaderProps> = ({
       </div>
       {modalVisible && (
         <Modal
-          title="Chart Insights"
+          title={
+            <span>
+              <i className="fas fa-lightbulb" style={{ marginRight: '8px', color: '#ffc107' }}></i>
+              Chart Insights
+            </span>
+          }
           visible={modalVisible}
           onCancel={handleModalClose}
           footer={null}
