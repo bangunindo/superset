@@ -257,8 +257,8 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
           <div
             style={{
               position: 'fixed',
-              bottom: '16px',
-              right: '16px',
+              bottom: '30px',
+              right: '35px',
               zIndex: 1000,
             }}
           >
@@ -291,7 +291,7 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
                   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                   borderRadius: '8px',
                   overflow: 'hidden',
-                  width: '300px',
+                  width: '500px',
                   height: '400px',
                 }}
               >
@@ -299,7 +299,7 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
                   onClick={() => setChatOpen(false)}
                   style={{
                     position: 'absolute',
-                    top: '8px',
+                    top: '16px',
                     right: '8px',
                     background: 'none',
                     border: 'none',

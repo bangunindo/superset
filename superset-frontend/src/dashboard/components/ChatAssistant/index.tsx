@@ -8,6 +8,16 @@ import {
     DatasetSelectLabel,
   } from 'src/features/datasets/DatasetSelectLabel';
 
+const StyledStepTitle = styled.span`
+  ${({
+    theme: {
+      typography: { sizes, weights },
+    },
+  }) => `
+      font-size: ${sizes.m}px;
+      font-weight: ${weights.bold};
+    `}
+`;
 const StyledStepDescription = styled.div`
   ${({ theme: { gridUnit } }) => `
     margin-top: ${gridUnit * 4}px;
@@ -42,7 +52,7 @@ const ChatAssistant = () => {
     setDataset(tableName); 
     setMessages((prevMessages) => [
         ...prevMessages,
-        { sender: 'bot', text: `You selected ${tableName}, How can I help you?` },
+        { sender: 'bot', text: `You selected ${tableName}, How can I assist you?` },
     ]);
   }
 
@@ -131,7 +141,13 @@ const ChatAssistant = () => {
                     ...prevMessages,
                     {
                         sender: 'bot',
-                        text: `Chart created successfully!\nChart ID: ${data.data.chart_id}\nURL: ${data.data.url}`,
+                        text: (
+                            <>
+                              <b>Chart created successfully!</b><br />
+                              Chart ID: {data.data.chart_id}<br />
+                              URL: {data.data.url}
+                            </>
+                        )
                     },
                 ]);
             } else {
@@ -157,10 +173,11 @@ const ChatAssistant = () => {
   };
 
   return (
-    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+    <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', marginTop: '-5px' }}>
         <Steps.Step
+            title={<StyledStepTitle>{t('Chat Assistant')}</StyledStepTitle>}
             description={
               <StyledStepDescription className="dataset">
                 <AsyncSelect
@@ -175,14 +192,14 @@ const ChatAssistant = () => {
                 />
               </StyledStepDescription>
             }
-          />
+        />
       </div>
 
       {/* Chat Display */}
       <div style={{ flex: 1, overflowY: 'auto', marginBottom: '16px', backgroundColor: '#f9f9f9', padding: '16px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
         {messages.map((message, index) => (
           <div key={index} style={{ marginBottom: '8px', textAlign: message.sender === 'user' ? 'right' : 'left' }}>
-            <div style={{ display: 'inline-block', backgroundColor: message.sender === 'user' ? '#007bff' : '#e9ecef', color: message.sender === 'user' ? 'white' : 'black', padding: '8px', borderRadius: '8px', maxWidth: '70%' }}>
+            <div style={{ display: 'inline-block', backgroundColor: message.sender === 'user' ? '#007bff' : '#e9ecef', color: message.sender === 'user' ? 'white' : 'black', padding: '8px', borderRadius: '8px', maxWidth: 'auto' }}>
               {message.text}
             </div>
           </div>
@@ -203,12 +220,12 @@ const ChatAssistant = () => {
             border: '1px solid #ddd',
             marginRight: '8px',
             outline: 'none',
-            fontSize: '16px',
+            fontSize: '14px',
             color: '#333',
             transition: 'all 0.2s ease-in-out',
           }}
         />
-        <Button onClick={handleSendMessage} style={{ padding: '8px 16px', backgroundColor: '#007bff', color: 'white', borderRadius: '4px', transition: 'background-color 0.2s ease-in-out' }}>
+        <Button onClick={handleSendMessage} disabled={!dataset} style={{ padding: '8px 16px', backgroundColor: !dataset ? '#6c757d' : '#007bff', color: 'white', borderRadius: '4px', transition: 'background-color 0.2s ease-in-out' }}>
           Send
         </Button>
       </div>
