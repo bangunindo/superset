@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { useState } from 'react';
 import { createContext, lazy, FC, useEffect, useMemo, useRef } from 'react';
 import { Global } from '@emotion/react';
 import { useHistory } from 'react-router-dom';
@@ -59,6 +60,7 @@ import {
 import SyncDashboardState, {
   getDashboardContextLocalStorage,
 } from '../components/SyncDashboardState';
+import ChatAssistant from 'src/dashboard/components/ChatAssistant'; //for chat assistant
 
 export const DashboardPageIdContext = createContext('');
 
@@ -128,6 +130,7 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
   const error = dashboardApiError || chartsApiError;
   const readyToRender = Boolean(dashboard && charts);
   const { dashboard_title, css, id = 0 } = dashboard || {};
+  const [isChatOpen, setChatOpen] = useState(false); //for chat assistant
 
   useEffect(() => {
     // mark tab id as redundant when user closes browser tab - a new id will be
@@ -250,6 +253,66 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
               <DashboardBuilder />
             </DashboardContainer>
           </DashboardPageIdContext.Provider>
+          {/* Floating Chat Icon */}
+          <div
+            style={{
+              position: 'fixed',
+              bottom: '16px',
+              right: '16px',
+              zIndex: 1000,
+            }}
+          >
+            <button
+              onClick={() => setChatOpen(!isChatOpen)}
+              style={{
+                backgroundColor: '#374151',
+                color: 'white',
+                borderRadius: '50%',
+                width: '56px',
+                height: '56px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                cursor: 'pointer',
+                border: 'none',
+              }}
+            >
+              <i className="fas fa-comments fa-2x"></i>
+            </button>
+
+            {isChatOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '60px',
+                  right: '0',
+                  backgroundColor: 'white',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  width: '300px',
+                  height: '400px',
+                }}
+              >
+                <button
+                  onClick={() => setChatOpen(false)}
+                  style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <i className="fas fa-close"></i>
+                </button>
+                <ChatAssistant />
+              </div>
+            )}
+          </div>
         </>
       ) : (
         <Loading />
