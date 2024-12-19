@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import Button from 'src/components/Button';
 import { AsyncSelect, Steps } from 'src/components';
 import { styled, t, SupersetClient, JsonResponse } from '@superset-ui/core';
@@ -7,17 +7,6 @@ import {
     Dataset,
     DatasetSelectLabel,
   } from 'src/features/datasets/DatasetSelectLabel';
-
-const StyledStepTitle = styled.span`
-  ${({
-    theme: {
-      typography: { sizes, weights },
-    },
-  }) => `
-      font-size: ${sizes.m}px;
-      font-weight: ${weights.bold};
-    `}
-`;
 
 const StyledStepDescription = styled.div`
   ${({ theme: { gridUnit } }) => `
@@ -38,48 +27,22 @@ const ChatAssistant = () => {
     ]);
   }, []);
 
-//   useEffect(() => {
-//     if (dataset) {
-//       setMessages((prevMessages) => [
-//         ...prevMessages,
-//         { sender: 'bot', text: `You selected ${dataset}, How can I help you?` },
-//       ]);
-//     }
-//   }, [dataset]);
-
-  const handleSendMessage = () => {
-    if (inputMessage.trim() && dataset) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: 'user', text: inputMessage },
-      ]);
-      setInputMessage('');
-
-      setTimeout(() => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: 'bot', text: `Response to "${inputMessage}"` },
-        ]);
-      }, 1000); 
-    }
-  };
-
   const selectedDataSource = useRef(0)
 
   const changeDatasource = (datasource: { label: string; value: string }) => {
     const str = datasource.value;
-    const number = str.split('_')[0]; 
+    const number = str.split('-')[0]; 
 
     selectedDataSource.current = number;
     console.log('Selected Data Source updated to:', selectedDataSource.current);
     console.log('Data Source updated:', datasource);
 
-    const tableName = datasource.label;
+    const tableName = str.split('-')[1];
     console.log('Table Name:', tableName);
-    setDataset(datasource.label); 
+    setDataset(tableName); 
     setMessages((prevMessages) => [
         ...prevMessages,
-        { sender: 'bot', text: `You selected ${datasource.label}, How can I help you?` },
+        { sender: 'bot', text: `You selected ${tableName}, How can I help you?` },
     ]);
   }
 
@@ -99,18 +62,14 @@ const ChatAssistant = () => {
       order_direction: 'asc',
     });
   
-    // Endpoint URL
     const endpoint = `/api/v1/dataset/?q=${query}`;
   
     return SupersetClient.get({ endpoint }).then((response: JsonResponse) => {
-      // Validasi respons
       const results = response.json.result;
-      console.log('result', results)
       if (!Array.isArray(results)) {
         throw new Error('Invalid response format');
       }
   
-      // Map data ke dalam format yang diinginkan
       const list: {
         customLabel: ReactNode;
         id: number;
@@ -118,12 +77,14 @@ const ChatAssistant = () => {
         value: string;
       }[] = results.map((item: Dataset) => ({
         id: item.id,
-        value: `${item.id}__${item.datasource_type}`,
+        value: `${item.id}-${item.table_name}`,
         customLabel: DatasetSelectLabel(item),
         label: item.table_name,
       }));
+      console.log('result', results)
+      console.log('list', list)
+
   
-      // Return data dengan totalCount
       return {
         data: list,
         totalCount: response.json.count,
@@ -131,7 +92,70 @@ const ChatAssistant = () => {
     });
   };  
 
-  
+  const handleSendMessage = async () => {
+    try {
+        if (inputMessage.trim() && dataset) {
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: 'user', text: inputMessage },
+            ]);
+            console.log('Message sent:', inputMessage);
+            setInputMessage('');
+
+            const payload = {
+                // dataset_id: parseInt(selectedDataSource.current, 10),
+                dataset_id: 66,
+                prompt: inputMessage,
+            };
+            console.log('Payload:', payload);
+
+            const response = await fetch(
+                'http://mjolnir-dev.vm.bangunindo.io:4000/api/v1/dashboard/chart',
+                {
+                    method: 'POST',
+                    headers: {
+                        'session': '.eJztVcuyqkgW_ZWOM-5zI0lIlDtTVAQFRN7Z0WHwlEeCeEARKurfK-Gc21XRdWvS0aOOHikJK_da-7H2L2-X9CNps7fvaUDa5O9vlzx--_6WROxiKaQ8ZAMWCsECCekiRAKImCXDAZ5J0DJIEjZBC47nBR6wEc-kDOQZGCzZYAlgKEAWLJaLhAVcwkVJvIwXgAUoXTCcgBAvLARuEaesMF2QIhopWbK8ECaQXaRM_EaJPNrk45MNpI9R-5FeuluZ1PSAxoPMUkjYkA8gSAQeLgOAWEogCtkQLTku4qM4iiguj_-FSgYlC6Uo13PFtEeZ0XK5leszikT5quer3CSxLed9HkBSyvmKl0VlazGNq5WCapMM4jpmfE97mN4WBCIYNFAOutscNIiPkbtjLFYxNTaWTcb5kGvwjcYjyX6V68WWVUcDaBsVaeO2lSuSxaLMq1Y0ahtj0C2bVc0-9z0HBDsBBC5D5OL20kaVYmSkWdHrKCr3WCopd5lVC5_DlY1wDhAurq-jdc7ob-cXNlJNhmibsletK6NKSulDI6fYJmLVSfct3p_7aLw9j_D1xJA8jpXSBp7_8KvdA7POI3BRGQ6oCQdhwO6uDT316VevJp5yVe0YTHnLn5guYp0ee8qIvTnGGLvyxG_0XXlUN0aPc6bELs6PljGolkr5UT0Dk-tUt2_JiOpnfaucsCDxVhM_5SzOcfjor-M8QogKbNL3RGsjIEiJq8DA3okxqwQhcU5GRaqpjhF0xgiSZ0iEMZZ2YMYUMvDHXaVv1tXRNUbd8jtNwpluAk4rYnK0skx1bYgLJ9cKmldz5gM8mGURvE4cT8n2LFk2bq2SqD5jQLV2tiYsoc069RTXd7WB1i9XJ2ytNXPO_qO4Tue7pPVYTCKqKXCdUi6ayndfI6b9EnsaiYgw3z_1T1jtuq-8MJHkDPJ2V4Yuecy52CsEV84QVU7psQ7NpfLwP_ss_8pvhiWmCec6x01cOQ8Poix07UmzFXtrEuXr9e_ffHL7E75c56FE4LHSnqGpCN82VbTxLuKjXO0jffvU30eQ9qXddB6pbJychs3Jyj7CrDVvT8PV-PWpu6nugCA8nNvjqlCGdX_eixfGlCoxR9ePxPBdI9fWh8x03C6s9HtpaLVs1e_qHm9W76TuXvHNvgaJgTw2WDRiHKZiG3H6vhVR0gprLPd8CXByz-uOqMNraZf3I9-M-b6PiYoIryBnfd6TJBulRXjO2bo-l4w8Wk9RIacwMST21KqQLzZnQYpHsEHpWbrcN2s7atLOvTmHnc2OWXJaECsz49WJi1Fcb-4WWloOHdSmxJzgSOnxVtYb2eCHmNPTy8h5o5zV25RkG-PKWgcAH2vRvACde1UDI8VQXu-lahFInn2lxkZuUUCSydZq-nQLHh018V_e_ta9ff_H_4jVKblv-YxuyYDaWoUtA1IreenWqvMtrdRFptLcXalWPqQt0auj_V-3OndQPtvZ3TXzaM_vmTqqdnQMUTadheyahBVDqMWUvnf-PJvG9dM6Ch8KTFgbuUd101HJZ2uAu1wdV0CV_A5LTuXnAKjFdjxS69Q2EbXKklXhluZry2pwi6Y74z3pJ6xRORkd42Hm4zXz2RevcR7TWiPxbKPoGVbaPOI2fI0WwMivcWPYChuR5uHYghi4_mzd2NPGwBUeHqsBqmHGqMW5UF2fmzlO9aQccbVFR-sKNWh3urR9YQvTGshQk3bkz9anEGpVnQenHFArHmSe9skQwheZ_tPcTushi90XOHrKM5Qcqn-u0cTpiSvc0hqRP-DpndR2HCGLvfMtZJUmodY88ZYJI1DMQHU8Y08pMP3Gh9Qep16o25_l59-5fNbZ-7ROujrA152_179oFlTTzJP-D3-sJ98tc88D7Y9nzFIrpD3mm38Rw40Hn-oOq-0XTuixizpMewfTNfUT3JNyeoSuA3z3nMXSDxxqcFXO-qJKaLFHtZL2q_eUODXnehQh7fWf6O2m_sW0jn_4ht7JUF67GpvMlL9n7CJwdF9NWHXj3IMVIfHA9DQeXUcvMuVoihPRbyNpXhUz18A1rthlssDtr3T10FqSFv9_HQrfZCS4z9o1DJMzcBvq4yXcabgQTM5bG24fesxQ9M_7BmXN5ZTC-2q_5llubR22WSDG3Knsbdovm6d28Hf9JTwnQD0ZT8nQbZa_3NWCP64kPYysk3IN1fXifF2S4D0Z9W2X5aGfQ4nUXvIoBOEiicjmWogOQwsGV3FM-27IHegctHMLP2136NiP96tP-ubVmwMDLlm4eCHOXzvd-l0vxaAJvOj8WnyslqNo2g1cF5vutQEph_dcFCSQ526q7gAgp4Im9s2t-EgR2l39w21Lsl1e1YJ-fHH7-vFQT1fZHgpSgPFw84dss-Wzh74c9233HlbGSUXJsHKrhjEA3Tl-fTsI18s6PySCGHfxtqcL8O2fv35twUvzcXvmcfJBd2NI8ueP7Xhpu6CbFmZrsffDRklIhJfLTVg3SAkfop2bqWdo9tuvvwGtEm3K.Z2GYbg.ovQJpNYnyjtZyvr8560auDzy2Kg',
+                        'X-API-Key': 'jntergkgmxvjzosduihucgrjizpouroe',
+                        'Content-Type': 'application/json',
+                        'accept': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            const data = await response.json();
+            console.log('Response data:', JSON.stringify(payload));
+
+            if (data.status === 'success') {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        sender: 'bot',
+                        text: `Chart created successfully!\nChart ID: ${data.data.chart_id}\nURL: ${data.data.url}`,
+                    },
+                ]);
+            } else {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { sender: 'bot', text: 'Failed to create chart. Please try again later.' },
+                ]);
+                console.error('API response error:', data);
+            }
+        } else {
+            console.log('Input message is empty or dataset not selected.');
+        }
+    } catch (error) {
+        console.error('Error in handleSendMessage:', error);
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+                sender: 'bot',
+                text: 'An error occurred. Please check the console for details.',
+            },
+        ]);
+    }
+  };
+
   return (
     <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
       {/* Header */}
