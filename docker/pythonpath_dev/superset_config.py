@@ -29,8 +29,9 @@ from flask_caching.backends.filesystemcache import FileSystemCache
 logger = logging.getLogger()
 
 APP_NAME = "Dashboard"
-APP_ICON = "/static/assets/images/superset-logo-horiz.png"
-LOGO_TARGET_PATH = "/static/assets/images/superset-logo-horiz.png"
+APP_ICON = "/static/assets/images/logo_bliv_black_sm.png"
+LOGO_TARGET_PATH = "/static/assets/images/logo_bliv_black_sm.png"
+FAVICONS = [{"href": "/static/assets/images/logo_bliv_black_sm.png"}]
 
 DATABASE_DIALECT = os.getenv("DATABASE_DIALECT")
 DATABASE_USER = os.getenv("DATABASE_USER")
