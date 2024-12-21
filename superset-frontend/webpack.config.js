@@ -64,7 +64,7 @@ const getAvailableTranslationCodes = () => {
 
 const {
   mode = 'development',
-  devserverPort = 9000,
+  devserverPort = 5174,
   measure = false,
   nameChunks = false,
 } = parsedArgs;
@@ -137,6 +137,7 @@ const plugins = [
     'process.env.REDUX_DEFAULT_MIDDLEWARE':
       process.env.REDUX_DEFAULT_MIDDLEWARE,
     'process.env.SCARF_ANALYTICS': JSON.stringify(process.env.SCARF_ANALYTICS),
+    'process.env.REACT_APP_API_KEY': JSON.stringify(process.env.REACT_APP_API_KEY),
   }),
 
   new CopyPlugin({
