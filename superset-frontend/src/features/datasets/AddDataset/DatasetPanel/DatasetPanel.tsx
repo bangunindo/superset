@@ -22,7 +22,7 @@ import Alert from 'src/components/Alert';
 import Table, { ColumnsType, TableSize } from 'src/components/Table';
 import { alphabeticalSort } from 'src/components/Table/sorters';
 // @ts-ignore
-import LOADING_GIF from 'src/assets/images/loading.gif';
+import LOADING_GIF from 'src/assets/images/bliv.gif';
 import { DatasetObject } from 'src/features/datasets/AddDataset/types';
 import { ITableColumn } from './types';
 import MessageContent from './MessageContent';

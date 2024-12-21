@@ -36,6 +36,7 @@ const parsedArgs = require('yargs').argv;
 const Visualizer = require('webpack-visualizer-plugin2');
 const getProxyConfig = require('./webpack.proxy-config');
 const packageConfig = require('./package');
+const Dotenv = require('dotenv-webpack');
 
 // input dir
 const APP_DIR = path.resolve(__dirname, './');
@@ -64,7 +65,7 @@ const getAvailableTranslationCodes = () => {
 
 const {
   mode = 'development',
-  devserverPort = 9000,
+  devserverPort = 5174,
   measure = false,
   nameChunks = false,
 } = parsedArgs;
@@ -92,6 +93,7 @@ if (!isDevMode) {
 }
 
 const plugins = [
+  new Dotenv(),
   new webpack.ProvidePlugin({
     process: 'process/browser.js',
     ...(isDevMode ? { Buffer: ['buffer', 'Buffer'] } : {}), // Fix legacy-plugin-chart-paired-t-test broken Story
