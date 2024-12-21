@@ -274,7 +274,6 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
               onClick={() => {
                 setChatOpen(!isChatOpen);
                 if (dashboardId !== null) {
-                  console.log(`Dashboard ID: ${dashboardId}`);
                 }
               }}
               style={{

@@ -36,6 +36,7 @@ const parsedArgs = require('yargs').argv;
 const Visualizer = require('webpack-visualizer-plugin2');
 const getProxyConfig = require('./webpack.proxy-config');
 const packageConfig = require('./package');
+const Dotenv = require('dotenv-webpack');
 
 // input dir
 const APP_DIR = path.resolve(__dirname, './');
@@ -92,6 +93,7 @@ if (!isDevMode) {
 }
 
 const plugins = [
+  new Dotenv(),
   new webpack.ProvidePlugin({
     process: 'process/browser.js',
     ...(isDevMode ? { Buffer: ['buffer', 'Buffer'] } : {}), // Fix legacy-plugin-chart-paired-t-test broken Story
@@ -137,7 +139,6 @@ const plugins = [
     'process.env.REDUX_DEFAULT_MIDDLEWARE':
       process.env.REDUX_DEFAULT_MIDDLEWARE,
     'process.env.SCARF_ANALYTICS': JSON.stringify(process.env.SCARF_ANALYTICS),
-    'process.env.REACT_APP_API_KEY': JSON.stringify(process.env.REACT_APP_API_KEY),
   }),
 
   new CopyPlugin({
