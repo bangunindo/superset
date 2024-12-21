@@ -131,7 +131,14 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
   const readyToRender = Boolean(dashboard && charts);
   const { dashboard_title, css, id = 0 } = dashboard || {};
   const [isChatOpen, setChatOpen] = useState(false); //for chat assistant
+  const [dashboardId, setDashboardId] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (dashboard) {
+      setDashboardId(dashboard.id);
+    }
+  }, [dashboard]);
+  
   useEffect(() => {
     // mark tab id as redundant when user closes browser tab - a new id will be
     // generated next time user opens a dashboard and the old one won't be reused
@@ -263,7 +270,13 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
             }}
           >
             <button
-              onClick={() => setChatOpen(!isChatOpen)}
+              // onClick={() => setChatOpen(!isChatOpen)}
+              onClick={() => {
+                setChatOpen(!isChatOpen);
+                if (dashboardId !== null) {
+                  console.log(`Dashboard ID: ${dashboardId}`);
+                }
+              }}
               style={{
                 backgroundColor: '#374151',
                 color: 'white',
@@ -309,7 +322,7 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
                 >
                   <i className="fas fa-close"></i>
                 </button>
-                <ChatAssistant />
+                <ChatAssistant dashboardId={dashboardId}/>
               </div>
             )}
           </div>

@@ -25,10 +25,24 @@ const StyledStepDescription = styled.div`
   `}
 `;
 
-const ChatAssistant = () => {
+interface ChatAssistantProps {
+  dashboardId: number | null;
+}
+
+const ChatAssistant: React.FC<ChatAssistantProps> = ({ dashboardId }) => {
   const [dataset, setDataset] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'bot'; text: string }>>([]);
   const [inputMessage, setInputMessage] = useState('');
+  const chatApiUrl = process.env.X_API_KEY;
+
+  console.log('chatApiUrl', chatApiUrl)
+  console.log(process.env);
+
+  useEffect(() => {
+    if (dashboardId) {
+      console.log(`Dashboard ID in ChatAssistant: ${dashboardId}`);
+    }
+  }, [dashboardId]);
 
   useEffect(() => {
     setMessages([
@@ -37,6 +51,7 @@ const ChatAssistant = () => {
     ]);
   }, []);
 
+  console.log('dashbaord id', dashboardId)
   const selectedDataSource = useRef(0)
 
   const changeDatasource = (datasource: { label: string; value: string }) => {
@@ -112,10 +127,15 @@ const ChatAssistant = () => {
   // };
 
   // const session = getCookie('session');
+  // const APIKey = process.env.REACT_APP_API_KEY;
+  // console.log('API Key:', process.env.REACT_APP_API_KEY);
+  
+  console.log('Environment Variables:', process.env);
+  console.log('API Key:', process.env.REACT_APP_API_KEY);
 
   const handleSendMessage = async () => {
     try {
-        if (inputMessage.trim() && dataset) {
+        if (inputMessage.trim() && dataset && dashboardId !== null) {
             setMessages((prevMessages) => [
                 ...prevMessages,
                 { sender: 'user', text: inputMessage },
@@ -124,9 +144,9 @@ const ChatAssistant = () => {
             setInputMessage('');
 
             const payload = {
-                // dataset_id: parseInt(selectedDataSource.current, 10),
-                dataset_id: 66,
-                // dashboard_id: 0,
+                dataset_id: parseInt(selectedDataSource.current, 10),
+                // dataset_id: 66,
+                dashboard_id: dashboardId,
                 bliv_dashboard_base_url: 'https://10.184.0.61',
                 prompt: inputMessage,
             };
@@ -138,7 +158,7 @@ const ChatAssistant = () => {
                     method: 'POST',
                     headers: {
                         'session': session,
-                        'X-API-Key': 'jntergkgmxvjzosduihucgrjizpouroe',
+                        'X-API-Key': "jntergkgmxvjzosduihucgrjizpouroe",
                         'Content-Type': 'application/json',
                         'accept': 'application/json',
                     },
