@@ -144,6 +144,8 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ dashboardId }) => {
 
             const data = await response.json();
 
+            const dashboard_url = payload.bliv_dashboard_base_url + "/superset/dashboard/" + dashboardId
+
             if (data.status === 'success') {
                 setMessages((prevMessages) => [
                     ...prevMessages,
@@ -153,10 +155,12 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ dashboardId }) => {
                             <>
                               <b>Chart created successfully!</b><br />
                               Chart ID: {data.data.chart_id}<br />
-                              Chart URL: <a href={data.data.url} target="_blank" rel="noopener noreferrer">{data.data.url}</a><br />
+                              Chart URL: <a href={data.data.url} target="_blank" rel="noopener noreferrer">
+                                            {data.data.url}
+                                        </a><br />
                               Bliv Dashboard URL: 
-                                <a href={payload.bliv_dashboard_base_url}/superset/dashboard/{dashboardId} target="_blank" rel="noopener noreferrer">
-                                    {payload.bliv_dashboard_base_url}/superset/dashboard/{dashboardId}
+                                <a href={dashboard_url} target="_blank" rel="noopener noreferrer">
+                                    {dashboard_url}
                                 </a>
                             </>
                         )
