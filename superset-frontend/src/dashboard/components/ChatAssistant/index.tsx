@@ -154,7 +154,10 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ dashboardId }) => {
                               <b>Chart created successfully!</b><br />
                               Chart ID: {data.data.chart_id}<br />
                               URL: {data.data.url}<br />
-                              Bliv Dashboard URL: {payload.bliv_dashboard_base_url}
+                              Bliv Dashboard URL: 
+                                <a href={payload.bliv_dashboard_base_url} target="_blank" rel="noopener noreferrer">
+                                    {payload.bliv_dashboard_base_url}
+                                </a>
                             </>
                         )
                     },
