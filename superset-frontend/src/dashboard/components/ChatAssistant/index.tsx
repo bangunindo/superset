@@ -7,7 +7,6 @@ import {
     Dataset,
     DatasetSelectLabel,
   } from 'src/features/datasets/DatasetSelectLabel';
-import { id } from 'spec/fixtures/mockDatasource';
 
 const StyledStepTitle = styled.span`
   ${({
