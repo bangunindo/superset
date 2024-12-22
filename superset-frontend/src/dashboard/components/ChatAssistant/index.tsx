@@ -108,6 +108,8 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ dashboardId }) => {
   //cek api key dari env
   const apiKey = process.env.REACT_APP_API_KEY || "No API Key";
   const session = process.env.SESSION_API;
+  console.log('api key', apiKey)
+  console.log('session', session)
 
   const handleSendMessage = async () => {
     try {
