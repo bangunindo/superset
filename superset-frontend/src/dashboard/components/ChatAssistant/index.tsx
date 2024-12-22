@@ -106,10 +106,10 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ dashboardId }) => {
   };  
 
   //cek api key dari env
-  const apiKey = process.env.REACT_APP_API_KEY || "No API Key";
-  const session = process.env.SESSION_API;
-  console.log('api key', apiKey)
-  console.log('session', session)
+  // const apiKey = process.env.REACT_APP_API_KEY || "No API Key";
+  // const session = process.env.SESSION_API;
+  // console.log('api key', apiKey)
+  // console.log('session', session)
 
   const handleSendMessage = async () => {
     try {
@@ -133,8 +133,8 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ dashboardId }) => {
                 {
                     method: 'POST',
                     headers: {
-                        'session': session,
-                        'X-API-Key': apiKey,
+                        'session': '.eJwljktqA0EMRO_S6yykbqk_vswgtSQSYmKYsVfBd48gyyrqFe-3HHH69Vluz_PlH-X4snIrtFtXiOEUoBUbb40eczdRocpo1mGjBZhAG8PR1w5cQnNbUmJeO01bTpMWQbYgaDOXoyEaag0lbUQ5GoE68n9Nr9pwKq9eUuR1-flvgxn3dcbxfHz7TxYwG1bpuLkzMauPFc7BJgPAVqvVNFw0uftjy92TSfD9Bzb2RMM.Z2UF0g.8PYCnOS5Ja1b1ZsJ9Y0iTJ1S3F0',
+                        'X-API-Key': 'jntergkgmxvjzosduihucgrjizpouroe',
                         'Content-Type': 'application/json',
                         'accept': 'application/json',
                     },
