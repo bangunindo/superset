@@ -29,8 +29,9 @@ from flask_caching.backends.filesystemcache import FileSystemCache
 logger = logging.getLogger()
 
 APP_NAME = "Dashboard"
-APP_ICON = "/static/assets/images/superset-logo-horiz.png"
-LOGO_TARGET_PATH = "/static/assets/images/superset-logo-horiz.png"
+APP_ICON = "/static/assets/images/logo_bliv_black_sm.png"
+LOGO_TARGET_PATH = "/static/assets/images/logo_bliv_black_sm.png"
+FAVICONS = [{"href": "/static/assets/images/logo_bliv_black_sm.png"}]
 
 DATABASE_DIALECT = os.getenv("DATABASE_DIALECT")
 DATABASE_USER = os.getenv("DATABASE_USER")
@@ -152,8 +153,8 @@ TALISMAN_CONFIG = {
             "https://10.184.0.61/backend/",
             "http://hanif.bangunindo.vpn:5001/",
             "http://localhost:3000/",
-            "http://localhost:9001/"
-
+            "http://localhost:9001/",
+            "http://mjolnir-dev.vm.bangunindo.io:4000/",
         ],
         "object-src": "'none'",
         "style-src": [
@@ -187,7 +188,8 @@ TALISMAN_DEV_CONFIG = {
             "https://10.184.0.61/backend/",
             "http://hanif.bangunindo.vpn:5001/",
             "http://localhost:3000/",
-            "http://localhost:9001/"
+            "http://localhost:9001/",
+            "http://mjolnir-dev.vm.bangunindo.io:4000/",
         ],
         "object-src": "'none'",
         "style-src": [
@@ -207,8 +209,9 @@ CORS_ORIGINS = [
     "https://10.184.0.61/backend/",
     "http://hanif.bangunindo.vpn:5001/",
     "http://localhost:3000/",
+    "http://mjolnir-dev.vm.bangunindo.io:4000/",
 ]
-
+SESSION_COOKIE_HTTPONLY = False 
 # ENABLE_CORS = True
 # CORS_OPTIONS = {
 #     "origins": ["http://localhost:9001"],  # Frontend origin
