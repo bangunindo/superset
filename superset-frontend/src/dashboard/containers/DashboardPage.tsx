@@ -290,7 +290,8 @@ export const DashboardPage: FC<PageProps> = ({ idOrSlug }: PageProps) => {
                 border: 'none',
               }}
             >
-              <i className="fas fa-comments fa-2x"></i>
+              {/* <i className="fas fa-comments fa-2x"></i> */}
+              <img src="/static/assets/images/icons/shines.png" alt="Chat Assistant" width="25" height="25" />
             </button>
 
             {isChatOpen && (
