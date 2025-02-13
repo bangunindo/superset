@@ -45,6 +45,7 @@ EXAMPLES_PASSWORD = os.getenv("EXAMPLES_PASSWORD")
 EXAMPLES_HOST = os.getenv("EXAMPLES_HOST")
 EXAMPLES_PORT = os.getenv("EXAMPLES_PORT")
 EXAMPLES_DB = os.getenv("EXAMPLES_DB")
+EMBEDDED_SUPERSET = True
 
 # The SQLAlchemy connection string.
 SQLALCHEMY_DATABASE_URI = (
@@ -121,8 +122,6 @@ try:
     )
 except ImportError:
     logger.info("Using default Docker config...")
-
-EMBEDDED_SUPERSET: True
 
 GUEST_ROLE_NAME = "Public"
 GUEST_TOKEN_JWT_SECRET = "test-guest-secret-change-me"
