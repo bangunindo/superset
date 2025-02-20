@@ -152,6 +152,8 @@ TALISMAN_CONFIG = {
             "https://10.184.0.61/backend/",
             "http://hanif.bangunindo.vpn:5001/",
             "http://localhost:3000/",
+            "http://localhost:3003/",
+            "http://127.0.0.1:3003/",
             "http://localhost:9001/",
             "http://mjolnir-dev.vm.bangunindo.io:4000/",
         ],
@@ -187,6 +189,8 @@ TALISMAN_DEV_CONFIG = {
             "https://10.184.0.61/backend/",
             "http://hanif.bangunindo.vpn:5001/",
             "http://localhost:3000/",
+            "http://localhost:3003/",
+            "http://127.0.0.1:3003/",
             "http://localhost:9001/",
             "http://mjolnir-dev.vm.bangunindo.io:4000/",
         ],
@@ -208,6 +212,8 @@ CORS_ORIGINS = [
     "https://10.184.0.61/backend/",
     "http://hanif.bangunindo.vpn:5001/",
     "http://localhost:3000/",
+    "http://localhost:3003/",
+    "http://127.0.0.1:3003/",
     "http://mjolnir-dev.vm.bangunindo.io:4000/",
 ]
 SESSION_COOKIE_HTTPONLY = False 
