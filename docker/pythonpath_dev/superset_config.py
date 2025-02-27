@@ -217,7 +217,7 @@ CORS_ORIGINS = [
     "http://mjolnir-dev.vm.bangunindo.io:4000/",
 ]
 SESSION_COOKIE_HTTPONLY = False 
-# ENABLE_CORS = True
+ENABLE_CORS = False
 # CORS_OPTIONS = {
 #     "origins": ["http://localhost:9001"],  # Frontend origin
 #     "methods": ["GET", "POST", "OPTIONS"],  # Izin metode HTTP
