@@ -217,9 +217,17 @@ CORS_ORIGINS = [
     "http://mjolnir-dev.vm.bangunindo.io:4000/",
 ]
 SESSION_COOKIE_HTTPONLY = False 
-ENABLE_CORS = False
-# CORS_OPTIONS = {
-#     "origins": ["http://localhost:9001"],  # Frontend origin
-#     "methods": ["GET", "POST", "OPTIONS"],  # Izin metode HTTP
-#     "allow_headers": ["Content-Type", "Authorization"],  # Header yang diizinkan
-# }
+ENABLE_CORS = True
+CORS_OPTIONS = {
+    "origins": [
+        "http://localhost:9001",
+        "https://10.184.0.61/backend/",
+        "https://10.184.0.61/backend/",
+        "http://localhost:3000/",
+        "http://localhost:3003/",
+        "http://127.0.0.1:3003/",
+        "http://mjolnir-dev.vm.bangunindo.io:4000/",
+        ],  # Frontend origin
+    "methods": ["GET", "POST", "PUT", "OPTIONS"],  # Izin metode HTTP
+    "allow_headers": ["*"],  # Header yang diizinkan
+}
